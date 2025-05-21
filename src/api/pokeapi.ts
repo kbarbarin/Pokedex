@@ -29,6 +29,22 @@ export const enrichWithSprite = (list: PokemonListItem[]) =>
     };
   });
 
+  export const enrichWithTypes = async (pokemon: PokemonListItem): Promise<PokemonListItem> => {
+    try {
+      const res = await axios.get(`pokemon/${pokemon.name}`);
+      const types = res.data.types.map((t: any) => t.type.name);
+  
+      return {
+        ...pokemon,
+        types,
+      };
+    } catch (e) {
+      console.warn(`Failed to fetch types for ${pokemon.name}`);
+      return pokemon;
+    }
+  };
+  
+
 
   export const fetchPokemonsByType = async (type: string) => {
     const res = await axios.get(`type/${type}`);

@@ -10,6 +10,7 @@ export interface PokemonListItem {
     id: number;
     name: string;
     url: string;
+    types?: string[];
 }
 
 export interface PokedexContextType {
@@ -17,6 +18,6 @@ export interface PokedexContextType {
     setPokemon: (p: Pokemon | null) => void;
     pokemonList: PokemonListItem[];
     setPokemonList: (p: PokemonListItem[]) => void;
-    addPokemon: (p: PokemonListItem) => void;
+    updatePokemonTypes: (name: string, types: string[]) => void;
   }
   

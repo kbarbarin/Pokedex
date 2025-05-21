@@ -21,9 +21,12 @@ export const PokedexProvider = ({ children }: { children: ReactNode }) => {
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
   const [pokemonList, setPokemonList] = useState<PokemonListItem[]>([]);
 
-  const addPokemon = (newPokemon: PokemonListItem) => {
-    if (pokemonList.find(p => p.name === newPokemon.name)) return;
-    setPokemonList(prev => [...prev, newPokemon]);
+  const updatePokemonTypes = (name: string, types: string[]) => {
+    setPokemonList((prev) =>
+      prev.map((p) =>
+        p.name === name ? { ...p, types } : p
+      )
+    );
   };
 
   return (
@@ -33,7 +36,7 @@ export const PokedexProvider = ({ children }: { children: ReactNode }) => {
         setPokemon,
         pokemonList,
         setPokemonList,
-        addPokemon,
+        updatePokemonTypes,
       }}
     >
       {children}
