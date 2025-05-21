@@ -7,35 +7,41 @@ import { fetchPokemonList } from "@/src/api/pokeapi";
 import { PokemonListItem } from "@/@type/pokemon";
 
 export default function Search() {
-    const [query, setQuery] = useState('');
-    const { pokemonList, setPokemonList } = usePokedex();
+  const [query, setQuery] = useState('');
+  const [bufferList, setBufferList] = useState<PokemonListItem[]>([]);
+  const { pokemonList, setPokemonList } = usePokedex();
 
-    useEffect(() => {
-        const loadAllPokemons = async () => {
-            try {
-                console.log('Fetching Pokémon...');
-                const raw = await fetchPokemonList();
+  useEffect(() => {
+    const loadAllPokemons = async () => {
+      try {
+        console.log('Fetching Pokémon...');
+        const raw = await fetchPokemonList();
 
-                setPokemonList(raw);
-            } catch (e) {
-                console.error('Failed to fetch pokemons:', e);
-            }
-        };
-
-
-        loadAllPokemons();
-    }, []);
-
-    const filterPokemonListByName = (all: PokemonListItem[], query: string) => {
-        return all.filter((p) => p.name.toLowerCase().startsWith(query.toLowerCase()));
+        setPokemonList(raw);
+        setBufferList(raw);
+      } catch (e) {
+        console.error('Failed to fetch pokemons:', e);
+      }
     };
 
+    loadAllPokemons();
+  }, []);
 
-    return (
-        <SafeAreaView>
-            <SearchBar value={query} onChangeText={setQuery} />
-            <PokemonList pokemonList={pokemonList} />
-        </SafeAreaView>
+  // 🔍 Met à jour bufferList à chaque changement de query
+  const handleQueryChange = (text: string) => {
+    setQuery(text);
+    const filtered = filterPokemonListByName(pokemonList, text);
+    setBufferList(filtered);
+  };
 
-    )
+  const filterPokemonListByName = (all: PokemonListItem[], query: string) => {
+    return all.filter((p) => p.name.toLowerCase().startsWith(query.toLowerCase()));
+  };
+
+  return (
+    <SafeAreaView>
+      <SearchBar value={query} onChangeText={handleQueryChange} />
+      <PokemonList pokemonList={bufferList} />
+    </SafeAreaView>
+  );
 }
