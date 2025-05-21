@@ -1,15 +1,18 @@
-import React, {useState} from "react";
-import { View, Text } from "react-native";
+import React, { useState } from "react";
+import { SafeAreaView } from "react-native";
 
-import SearchBar from "@/src/components/search/SearchBar";
+import { SearchBar, PokemonList } from "@/src/components/search";
+import { usePokedex } from "@/src/store/PokedexContext";
 
-export default function Search () {
+export default function Search() {
     const [query, setQuery] = useState('');
+    const { pokemons } = usePokedex();
 
     return (
-        <View>
+        <SafeAreaView>
             <SearchBar value={query} onChangeText={setQuery} />
-            <Text>SearchScreen</Text>
-        </View>
+            <PokemonList pokemons={pokemons} />
+        </SafeAreaView>
+
     )
 }
