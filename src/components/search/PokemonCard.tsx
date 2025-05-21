@@ -78,8 +78,21 @@ const typeColors: Record<string, string> = {
     grass: '#74CB48',
     electric: '#F9CF30',
     poison: '#A43E9E',
-    // ...ajoute d'autres types
-};
+    flying: '#A891EC',
+    bug: '#A7B723',
+    normal: '#AAA67F',
+    fairy: '#E69EAC',
+    fighting: '#C12239',
+    psychic: '#FB5584',
+    rock: '#B69E31',
+    ground: '#DEC16B',
+    ice: '#9AD6DF',
+    ghost: '#70559B',
+    dragon: '#7037FF',
+    dark: '#75574C',
+    steel: '#B7B9D0',
+  };
+  
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
