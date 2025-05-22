@@ -120,12 +120,18 @@ const BarContainer = styled.View`
   overflow: hidden;
   margin-horizontal: 8px;
 `;
-
-const BarFill = styled.View<{ width: string }>`
+const BarFill = styled.View<{ value: number }>`
   height: 100%;
-  background-color: #60a5fa;
-  width: ${(p) => p.width};
+  width: ${(p) => `${Math.min(p.value, 100)}%`};
+  background-color: ${(p) => {
+    if (p.value < 40) return '#ef4444'; // rouge
+    if (p.value < 60) return '#f97316'; // orange
+    if (p.value < 80) return '#facc15'; // jaune
+    return '#22c55e'; // vert
+  }};
+  border-radius: 4px;
 `;
+
 
 const StatValue = styled.Text`
   width: 32px;
@@ -292,7 +298,7 @@ export default function Details() {
               <StatRow key={s.name}>
                 <StatName>{cap(s.name)}</StatName>
                 <BarContainer>
-                  <BarFill width={`${Math.min(s.value, 100)}%`} />
+                  <BarFill value={s.value} />
                 </BarContainer>
                 <StatValue>{s.value}</StatValue>
               </StatRow>
