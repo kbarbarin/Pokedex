@@ -67,3 +67,30 @@ export const fetchEvolutionChain = async (url: string) => {
   const res = await axios.get(url);
   return res.data;
 };
+
+export const fetchMovesDetails = async (moveNames: string[]) => {
+  try {
+    const movesDetails = await Promise.all(
+      moveNames.slice(0, 20).map(async (moveName) => { // limite à 20 moves pour éviter trop de requêtes
+        const res = await axios.get(`move/${moveName}`);
+        const flavorEntry = res.data.flavor_text_entries.find(
+          (entry: any) => entry.language.name === 'en'
+        );
+
+        return {
+          name: moveName,
+          power: res.data.power,
+          accuracy: res.data.accuracy,
+          type: res.data.type.name,
+          pp: res.data.pp,
+          description: flavorEntry ? flavorEntry.flavor_text.replace(/\n|\f/g, ' ') : '',
+        };
+      })
+    );
+
+    return movesDetails;
+  } catch (error) {
+    console.warn('Erreur lors de la récupération des détails des moves', error);
+    return [];
+  }
+};
