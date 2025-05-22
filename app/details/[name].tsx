@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Text, Pressable, View, ScrollView } from 'react-native';
+import { ActivityIndicator, Text, Pressable, View } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,8 +10,9 @@ import {
   fetchEvolutionChain,
   fetchMovesDetails,
 } from '@/src/api/pokeapi';
-import { Pokemon } from '@/@type/pokemon';
+import { PokemonFull } from '@/@type/pokemon';
 import { usePokedex } from '@/src/store/PokedexContext';
+import { AboutSection, EvolutionSection, MovesSection, StatsSection } from '@/src/components/details';
 
 /* ------------------- STYLES ------------------- */
 const Container = styled.SafeAreaView`
@@ -140,44 +141,6 @@ const StatValue = styled.Text`
   color: #0f172a;
 `;
 
-const EvolutionContainer = styled.ScrollView.attrs(() => ({
-  horizontal: true,
-  showsHorizontalScrollIndicator: false,
-  contentContainerStyle: { alignItems: 'center', paddingHorizontal: 16 },
-}))`
-  margin-top: 20px;
-`;
-
-const EvoCard = styled.View`
-  background-color: #fff;
-  padding: 12px;
-  border-radius: 12px;
-  align-items: center;
-  margin-right: 16px;
-  elevation: 3;
-  shadow-color: #000;
-  shadow-opacity: 0.1;
-  shadow-radius: 5px;
-  width: 100px;
-`;
-
-const EvoImage = styled.Image`
-  width: 80px;
-  height: 80px;
-  margin-bottom: 8px;
-`;
-
-const EvoName = styled.Text`
-  font-weight: bold;
-  text-transform: capitalize;
-  text-align: center;
-`;
-
-const Arrow = styled.Text`
-  font-size: 24px;
-  margin-right: 16px;
-  color: #888;
-`;
 
 const MovesContainer = styled.ScrollView`
   margin-top: 20px;
@@ -237,11 +200,6 @@ const typeColors: Record<string, string> = {
 };
 
 /* ------------------- TYPES ------------------- */
-type PokemonFull = Pokemon & {
-  stats: { name: string; value: number }[];
-  moves: MoveDetailsType[];
-  evolutions: string[];
-};
 
 type MoveDetailsType = {
   name: string;
@@ -260,7 +218,6 @@ export default function Details() {
   const { name } = useLocalSearchParams();
   const [pokemon, setPokemon] = useState<PokemonFull | null>(null);
   const [loading, setLoading] = useState(true);
-  const { pokemonList } = usePokedex();
   const [activeTab, setActiveTab] = useState<'About' | 'Stats' | 'Evolution' | 'Moves'>('About');
 
   const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -307,7 +264,7 @@ export default function Details() {
         const movesDetailsFromAPI = await fetchMovesDetails(movesInitial.map(m => m.name));
 
         // Fusion des données movesInitial + movesDetailsFromAPI
-        const moves = movesInitial.map((m) => {
+        const moves = movesInitial.map((m: any) => {
           const fullDetails = movesDetailsFromAPI.find(md => md.name === m.name);
           return {
             ...m,
@@ -344,11 +301,6 @@ export default function Details() {
     load();
   }, [name]);
 
-  function getPokemonId(pokemonName: string): number | null {
-    const found = pokemonList.find((p) => p.name.toLowerCase() === pokemonName.toLowerCase());
-    return found ? found.id : null;
-  }
-
   if (loading)
     return (
       <Container>
@@ -364,12 +316,7 @@ export default function Details() {
     );
 
   // Group moves by learn method (ex: level-up, machine, tutor, egg)
-  const groupedMoves = pokemon.moves.reduce<Record<string, MoveDetailsType[]>>((acc, move) => {
-    const method = move.move_learn_method.replace(/-/g, ' ');
-    if (!acc[method]) acc[method] = [];
-    acc[method].push(move);
-    return acc;
-  }, {});
+  
 
   return (
     <Container>
@@ -403,73 +350,20 @@ export default function Details() {
         </TabBar>
 
         {activeTab === 'About' && (
-          <Text style={{ marginTop: 20, textAlign: 'center' }}>
-            {pokemon.description || 'Pas encore de description.'}
-          </Text>
+          <AboutSection description={pokemon.description} />
         )}
 
         {activeTab === 'Stats' && (
-          <StatsContainer>
-            {pokemon.stats.map((s) => (
-              <StatRow key={s.name}>
-                <StatName>{cap(s.name)}</StatName>
-                <BarContainer>
-                  <BarFill value={s.value} />
-                </BarContainer>
-                <StatValue>{s.value}</StatValue>
-              </StatRow>
-            ))}
-          </StatsContainer>
+          <StatsSection pokemon={pokemon}/>
         )}
 
         {activeTab === 'Evolution' && (
-          <EvolutionContainer>
-            {pokemon.evolutions.map((evoName, i) => {
-              const id = getPokemonId(evoName);
-              const spriteUrl = id
-                ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`
-                : undefined;
-              return (
-                <React.Fragment key={evoName}>
-                  <EvoCard>
-                    {spriteUrl && <EvoImage source={{ uri: spriteUrl }} />}
-                    <EvoName>{cap(evoName)}</EvoName>
-                  </EvoCard>
-                  {i < pokemon.evolutions.length - 1 && <Arrow>→</Arrow>}
-                </React.Fragment>
-              );
-            })}
-          </EvolutionContainer>
+          <EvolutionSection pokemon={pokemon}/>
         )}
 
-{activeTab === 'Moves' && (
-    <MovesContainer>
-      {Object.entries(groupedMoves).map(([method, moves]) => (
-        <View key={method} style={{ marginBottom: 20 }}>
-          <MoveGroupTitle>{cap(method)}</MoveGroupTitle>
-          {moves.map((move) => (
-            <MoveItem key={move.name}>
-              <View>
-                <MoveName>{cap(move.name.replace(/-/g, ' '))}</MoveName>
-                <MoveDetails>
-                  {move.description}
-                </MoveDetails>
-              </View>
-              <View style={{ alignItems: 'flex-end' }}>
-                <MoveDetails>Type: {cap(move.type)}</MoveDetails>
-                <MoveDetails>Power: {move.power ?? '-'}</MoveDetails>
-                <MoveDetails>Accuracy: {move.accuracy ?? '-'}</MoveDetails>
-                <MoveDetails>PP: {move.pp ?? '-'}</MoveDetails>
-                <MoveDetails>
-                  {move.level_learned_at ? `Lvl ${move.level_learned_at}` : ''}
-                </MoveDetails>
-              </View>
-            </MoveItem>
-          ))}
-        </View>
-      ))}
-    </MovesContainer>
-  )}
+        {activeTab === 'Moves' && (
+          <MovesSection pokemon={pokemon}/>
+        )}
       </Card>
     </Container>
   );

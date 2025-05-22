@@ -6,6 +6,13 @@ export interface Pokemon {
     type: string[];
 }
 
+export type PokemonFull = Pokemon & {
+    stats: { name: string; value: number }[];
+    moves: MoveDetailsType[];
+    evolutions: string[];
+};
+
+
 export interface PokemonListItem {
     id: number;
     name: string;
@@ -20,4 +27,4 @@ export interface PokedexContextType {
     setPokemonList: (p: PokemonListItem[]) => void;
     updatePokemonTypes: (name: string, types: string[]) => void;
     getPokemonTypes: (name: string) => string[] | undefined;
-  }
+}
