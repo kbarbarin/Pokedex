@@ -20,7 +20,7 @@ export const fetchPokemonList = async (
 export const enrichWithSprite = (list: PokemonListItem[]) =>
   list.map((pokemon) => {
     const idString = pokemon.url.split('/').filter(Boolean).pop();
-    const id = idString ? parseInt(idString, 10) : 0; // fallback si undefined
+    const id = idString ? parseInt(idString, 10) : 0;
 
     return {
       id,
@@ -42,14 +42,13 @@ export const enrichWithSprite = (list: PokemonListItem[]) =>
       console.warn(`Failed to fetch types for ${pokemon.name}`);
       return pokemon;
     }
-  };
-  
+  };  
 
 
   export const fetchPokemonsByType = async (type: string) => {
     const res = await axios.get(`type/${type}`);
     const pokemons = res.data.pokemon.map((p: any) => p.pokemon);
-    return enrichWithSprite(pokemons); // fonctionne si tu as enrichWithSprite
+    return enrichWithSprite(pokemons);
   };
   
 

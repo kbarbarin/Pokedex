@@ -10,7 +10,7 @@ export default function Search() {
     const [query, setQuery] = useState('');
     const [bufferList, setBufferList] = useState<PokemonListItem[]>([]);
     const [selectedType, setSelectedType] = useState('all');
-    const { pokemonList, setPokemonList } = usePokedex();
+    const { pokemonList, setPokemonList, getPokemonTypes } = usePokedex();
 
     useEffect(() => {
         const loadAllPokemons = async () => {
@@ -24,27 +24,39 @@ export default function Search() {
                 } catch (e) {
                     console.error('Failed to fetch pokemons:', e);
                 }
+            } else {
+                setBufferList(pokemonList);
             }
         };
 
         loadAllPokemons();
     }, []);
 
-    // 🔍 Met à jour bufferList à chaque changement de query
     const handleQueryChange = (text: string) => {
         setQuery(text);
-            const filtered = filterPokemonListByName(bufferList, text);
-            setBufferList(filtered);
-    };
+        const filtered = filterPokemonListByName(pokemonList, text);
+        setBufferList(filtered);
+
+    }; // Problème : ne marche pas quand on a un type selectionner / pour ça remplacer par bufferList
+
+    const fillWithKnownTypes = (list: { id: number, name: string, url: string }[]) => {
+        return list.map(pokemon => {
+            const types = getPokemonTypes(pokemon.name);
+            return {
+                ...pokemon,
+                types: types || [],
+            };
+        });
+    }
 
     const handleTypeChange = async (type: string) => {
-        console.log('type = ' + type);
         setSelectedType(type);
         if (type === 'all') {
             setBufferList(pokemonList);
         } else {
             const list = await fetchPokemonsByType(type);
-            setBufferList(list);
+            const knownTypedList = fillWithKnownTypes(list);
+            setBufferList(knownTypedList);
         }
     }
 

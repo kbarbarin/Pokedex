@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';  // <-- import useRouter
 
 import { usePokedex } from '@/src/store/PokedexContext';
 import { enrichWithTypes } from '@/src/api/pokeapi';
@@ -10,7 +11,7 @@ interface Props {
     pokemon: PokemonListItem;
 }
 
-const Card = styled.View`
+const Card = styled.TouchableOpacity`  /* TouchableOpacity pour clic */
   width: 48%;
   background-color: #fff;
   border-radius: 16px;
@@ -72,69 +73,71 @@ const TypeBadge = styled.Text<{ bgColor: string }>`
 `;
 
 const typeColors: Record<string, string> = {
-    fire: '#F57D31',
-    water: '#6493EB',
-    grass: '#74CB48',
-    electric: '#F9CF30',
-    poison: '#A43E9E',
-    flying: '#A891EC',
-    bug: '#A7B723',
-    normal: '#AAA67F',
-    fairy: '#E69EAC',
-    fighting: '#C12239',
-    psychic: '#FB5584',
-    rock: '#B69E31',
-    ground: '#DEC16B',
-    ice: '#9AD6DF',
-    ghost: '#70559B',
-    dragon: '#7037FF',
-    dark: '#75574C',
-    steel: '#B7B9D0',
-  };
-  
+  fire: '#F57D31',
+  water: '#6493EB',
+  grass: '#74CB48',
+  electric: '#F9CF30',
+  poison: '#A43E9E',
+  flying: '#A891EC',
+  bug: '#A7B723',
+  normal: '#AAA67F',
+  fairy: '#E69EAC',
+  fighting: '#C12239',
+  psychic: '#FB5584',
+  rock: '#B69E31',
+  ground: '#DEC16B',
+  ice: '#9AD6DF',
+  ghost: '#70559B',
+  dragon: '#7037FF',
+  dark: '#75574C',
+  steel: '#B7B9D0',
+};
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 const PokemonCard: React.FC<Props> = ({ pokemon }) => {
-    const { updatePokemonTypes } = usePokedex();
+  const router = useRouter();
+  const { updatePokemonTypes } = usePokedex();
+  const [localPokemon, setLocalPokemon] = useState(pokemon);
 
-    useEffect(() => {
-        if (!pokemon.types) {
-            enrichWithTypes(pokemon).then((updated) => {
-                if (updated.types) {
-                    updatePokemonTypes(pokemon.name, updated.types);
-                }
-            });
+  useEffect(() => {
+    if (!pokemon.types) {
+      enrichWithTypes(pokemon).then((updated) => {
+        if (updated.types) {
+          updatePokemonTypes(pokemon.name, updated.types);
+          setLocalPokemon(updated);
         }
-    }, []);
+      });
+    }
+  }, [pokemon]);
+  
 
+  return (
+    <Card onPress={() => router.push(`/details/${localPokemon.name}`)}>
+      <Header>
+        <ID>#{localPokemon.id.toString().padStart(3, '0')}</ID>
+        <HeartButton>
+          <Ionicons name="heart-outline" size={18} color="#ccc" />
+        </HeartButton>
+      </Header>
 
-    return (
-        <Card>
-            <Header>
-                <ID>#{pokemon.id.toString().padStart(3, '0')}</ID>
-                <HeartButton>
-                    <Ionicons name="heart-outline" size={18} color="#ccc" />
-                </HeartButton>
-            </Header>
+      <SpriteContainer>
+        <Sprite source={{ uri: localPokemon.url }} resizeMode="contain" />
+      </SpriteContainer>
 
-            <SpriteContainer>
-                <Sprite source={{ uri: pokemon.url }} resizeMode="contain" />
-            </SpriteContainer>
+      <Name>{capitalize(localPokemon.name)}</Name>
 
-            <Name>{capitalize(pokemon.name)}</Name>
-
-            {pokemon.types && (
-                <Types>
-                    {pokemon.types.map((type) => (
-                        <TypeBadge key={type} bgColor={typeColors[type] || '#666'}>
-                            {capitalize(type)}
-                        </TypeBadge>
-                    ))}
-                </Types>
-            )}
-        </Card>
-    );
+      {localPokemon.types && (
+        <Types>
+          {localPokemon.types.map((type) => (
+            <TypeBadge key={type} bgColor={typeColors[type] || '#666'}>
+              {capitalize(type)}
+            </TypeBadge>
+          ))}
+        </Types>
+      )}
+    </Card>
+  );
 };
 
 export default PokemonCard;

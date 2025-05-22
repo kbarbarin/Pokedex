@@ -29,6 +29,13 @@ export const PokedexProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
+  const getPokemonTypes = (name: string): string[] | undefined => {
+    const pokemon = pokemonList.find(p => p.name === name);
+    return pokemon?.types;
+  };
+
+
+
   return (
     <PokedexContext.Provider
       value={{
@@ -37,6 +44,7 @@ export const PokedexProvider = ({ children }: { children: ReactNode }) => {
         pokemonList,
         setPokemonList,
         updatePokemonTypes,
+        getPokemonTypes
       }}
     >
       {children}
