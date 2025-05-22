@@ -2,7 +2,7 @@ import React from 'react';
 import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import { PokemonListItem } from '@/@type/pokemon';
-import PokemonCard from './PokemonCard';
+import PokemonCard from '../search/PokemonCard';
 
 interface Props {
   pokemonList: PokemonListItem[];

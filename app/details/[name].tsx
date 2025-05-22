@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Text, Pressable } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
 import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
-import {
-  fetchPokemonDetails,
-  fetchPokemonSpecies,
-  fetchEvolutionChain,
-  fetchMovesDetails,
-} from '@/src/api/pokeapi';
+import { fetchPokemonDetails, fetchPokemonSpecies, fetchEvolutionChain, fetchMovesDetails } from '@/src/api/pokeapi';
 import { PokemonFull } from '@/@type/pokemon';
 import { AboutSection, EvolutionSection, MovesSection, StatsSection } from '@/src/components/details';
+import { usePokedex } from '@/src/store/PokedexContext';
 
 const Container = styled.SafeAreaView`
   flex: 1;
@@ -114,23 +110,15 @@ const typeColors: Record<string, string> = {
   steel: '#B7B9D0',
 };
 
-type MoveDetailsType = {
-  name: string;
-  level_learned_at: number | null;
-  move_learn_method: string;
-  type: string;
-  power?: number | null;
-  accuracy?: number | null;
-  pp?: number | null;
-  description?: string;
-};
-
 export default function Details() {
   const router = useRouter();
   const { name } = useLocalSearchParams();
   const [pokemon, setPokemon] = useState<PokemonFull | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'About' | 'Stats' | 'Evolution' | 'Moves'>('About');
+
+  const { favoriteList, toggleFavorite } = usePokedex();
+  const isFavorite = pokemon && favoriteList.some(p => p.name === pokemon.name);
 
   const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -140,11 +128,9 @@ export default function Details() {
     const load = async () => {
       try {
         const data = await fetchPokemonDetails(name);
-
-        // Récupération description, évolution, stats (inchangées)
         const species = await fetchPokemonSpecies(data.id);
         const langEN = species.flavor_text_entries.find((f: any) => f.language.name === 'en');
-        const description = (langEN)?.flavor_text.replace(/\f|\n/g, ' ') ?? '';
+        const description = langEN?.flavor_text.replace(/\f|\n/g, ' ') ?? '';
 
         const evoRaw = await fetchEvolutionChain(species.evolution_chain.url);
         const parseChain = (node: any, acc: string[] = []): string[] => {
@@ -162,7 +148,6 @@ export default function Details() {
           value: s.base_stat,
         })) || [];
 
-        // Extraction des noms des moves et détails initiaux (niveau, méthode)
         const movesInitial = data.moves?.map((m: any) => {
           const details = m.version_group_details[0];
           return {
@@ -172,10 +157,8 @@ export default function Details() {
           };
         }) || [];
 
-        // Appel de la nouvelle fonction pour récupérer les détails complets
         const movesDetailsFromAPI = await fetchMovesDetails(movesInitial.map(m => m.name));
 
-        // Fusion des données movesInitial + movesDetailsFromAPI
         const moves = movesInitial.map((m: any) => {
           const fullDetails = movesDetailsFromAPI.find(md => md.name === m.name);
           return {
@@ -233,7 +216,18 @@ export default function Details() {
         <Pressable onPress={() => router.push('/search')}>
           <Ionicons name="chevron-back" size={24} color="#000" />
         </Pressable>
-        <Ionicons name="heart-outline" size={24} color="#ccc" />
+        <Pressable onPress={() => toggleFavorite({
+          id: pokemon.id,
+          name: pokemon.name,
+          url: pokemon.imageUrl,
+          types: pokemon.type,
+        })}>
+          <Ionicons
+            name={isFavorite ? 'heart' : 'heart-outline'}
+            size={24}
+            color={isFavorite ? '#ef4444' : '#ccc'}
+          />
+        </Pressable>
       </Header>
 
       <Card>
@@ -258,21 +252,10 @@ export default function Details() {
           ))}
         </TabBar>
 
-        {activeTab === 'About' && (
-          <AboutSection description={pokemon.description} />
-        )}
-
-        {activeTab === 'Stats' && (
-          <StatsSection pokemon={pokemon}/>
-        )}
-
-        {activeTab === 'Evolution' && (
-          <EvolutionSection pokemon={pokemon}/>
-        )}
-
-        {activeTab === 'Moves' && (
-          <MovesSection pokemon={pokemon}/>
-        )}
+        {activeTab === 'About' && <AboutSection description={pokemon.description} />}
+        {activeTab === 'Stats' && <StatsSection pokemon={pokemon} />}
+        {activeTab === 'Evolution' && <EvolutionSection pokemon={pokemon} />}
+        {activeTab === 'Moves' && <MovesSection pokemon={pokemon} />}
       </Card>
     </Container>
   );
