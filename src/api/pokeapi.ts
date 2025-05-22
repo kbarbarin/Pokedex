@@ -57,3 +57,13 @@ export const fetchPokemonDetails = async (name: string) => {
     const res = await axios.get(`pokemon/${name}`);
     return res.data;
 };
+
+export const fetchPokemonSpecies = async (idOrName: string | number) => {
+  const res = await axios.get(`pokemon-species/${idOrName}`);
+  return res.data;
+};
+
+export const fetchEvolutionChain = async (url: string) => {
+  const res = await axios.get(url);
+  return res.data;
+};
