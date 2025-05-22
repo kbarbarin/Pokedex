@@ -14,14 +14,16 @@ export default function Search() {
 
     useEffect(() => {
         const loadAllPokemons = async () => {
-            try {
-                console.log('Fetching Pokémon...');
-                const raw = await fetchPokemonList();
+            if (pokemonList.length === 0) {
+                try {
+                    console.log('Fetching Pokémon...');
+                    const raw = await fetchPokemonList();
 
-                setPokemonList(raw);
-                setBufferList(raw);
-            } catch (e) {
-                console.error('Failed to fetch pokemons:', e);
+                    setPokemonList(raw);
+                    setBufferList(raw);
+                } catch (e) {
+                    console.error('Failed to fetch pokemons:', e);
+                }
             }
         };
 
@@ -31,8 +33,8 @@ export default function Search() {
     // 🔍 Met à jour bufferList à chaque changement de query
     const handleQueryChange = (text: string) => {
         setQuery(text);
-        const filtered = filterPokemonListByName(pokemonList, text);
-        setBufferList(filtered);
+            const filtered = filterPokemonListByName(bufferList, text);
+            setBufferList(filtered);
     };
 
     const handleTypeChange = async (type: string) => {
