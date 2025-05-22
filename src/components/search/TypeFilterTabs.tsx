@@ -7,7 +7,48 @@ interface Props {
   onSelect: (type: string) => void;
 }
 
-const types = ['All', 'Fire', 'Water', 'Grass', 'Electric', 'Poison', 'Bug', 'Normal', 'Flying'];
+const types = [
+  'All',
+  'Fire',
+  'Water',
+  'Grass',
+  'Electric',
+  'Poison',
+  'Bug',
+  'Normal',
+  'Flying',
+  'Fairy',
+  'Fighting',
+  'Psychic',
+  'Rock',
+  'Ground',
+  'Ice',
+  'Ghost',
+  'Dragon',
+  'Dark',
+  'Steel',
+];
+
+const typeColors: Record<string, string> = {
+  fire: '#F57D31',
+  water: '#6493EB',
+  grass: '#74CB48',
+  electric: '#F9CF30',
+  poison: '#A43E9E',
+  flying: '#A891EC',
+  bug: '#A7B723',
+  normal: '#AAA67F',
+  fairy: '#E69EAC',
+  fighting: '#C12239',
+  psychic: '#FB5584',
+  rock: '#B69E31',
+  ground: '#DEC16B',
+  ice: '#9AD6DF',
+  ghost: '#70559B',
+  dragon: '#7037FF',
+  dark: '#75574C',
+  steel: '#B7B9D0',
+};
 
 const Container = styled.View`
   padding: 0 12px;
@@ -23,14 +64,14 @@ const Scroll = styled.ScrollView.attrs({
   },
 })``;
 
-const TypeButton = styled.TouchableOpacity<{ active: boolean }>`
+const TypeButton = styled.TouchableOpacity<{ background: string }>`
   padding: 6px 14px;
-  background-color: ${({ active }) => (active ? '#3558CD' : '#f0f0f0')};
+  background-color: ${({ background }: any) => background};
   border-radius: 20px;
 `;
 
 const TypeText = styled.Text<{ active: boolean }>`
-  color: ${({ active }) => (active ? '#fff' : '#555')};
+  color: ${({ active }: any) => (active ? '#fff' : '#555')};
   font-weight: 600;
   font-size: 14px;
 `;
@@ -39,17 +80,23 @@ const TypeFilterTabs: React.FC<Props> = ({ selectedType, onSelect }) => {
   return (
     <Container>
       <Scroll>
-        {types.map((type) => (
-          <TypeButton
-            key={type}
-            active={selectedType.toLowerCase() === type.toLowerCase()}
-            onPress={() => onSelect(type.toLowerCase())}
-          >
-            <TypeText active={selectedType.toLowerCase() === type.toLowerCase()}>
-              {type}
-            </TypeText>
-          </TypeButton>
-        ))}
+        {types.map((type) => {
+          const typeKey = type.toLowerCase();
+          const isActive = selectedType === typeKey;
+          const backgroundColor = isActive
+            ? typeColors[typeKey] || '#666'
+            : '#eee';
+
+          return (
+            <TypeButton
+              key={type}
+              background={backgroundColor}
+              onPress={() => onSelect(typeKey)}
+            >
+              <TypeText active={isActive}>{type}</TypeText>
+            </TypeButton>
+          );
+        })}
       </Scroll>
     </Container>
   );

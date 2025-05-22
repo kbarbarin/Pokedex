@@ -58,13 +58,12 @@ const Name = styled.Text`
 
 const Types = styled.View`
   flex-direction: row;
-  justify-content: center;
   gap: 6px;
   margin-top: 8px;
 `;
 
 const TypeBadge = styled.Text<{ bgColor: string }>`
-  background-color: ${({ bgColor }) => bgColor};
+  background-color: ${({ bgColor }: any) => bgColor};
   color: white;
   font-size: 12px;
   font-weight: 600;

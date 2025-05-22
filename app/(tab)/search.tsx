@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native";
 
 import { SearchBar, PokemonList, TypeFilterTabs } from "@/src/components/search";
 import { usePokedex } from "@/src/store/PokedexContext";
-import { fetchPokemonList } from "@/src/api/pokeapi";
+import { fetchPokemonList, fetchPokemonsByType } from "@/src/api/pokeapi";
 import { PokemonListItem } from "@/@type/pokemon";
 
 export default function Search() {
@@ -35,6 +35,17 @@ export default function Search() {
         setBufferList(filtered);
     };
 
+    const handleTypeChange = async (type: string) => {
+        console.log('type = ' + type);
+        setSelectedType(type);
+        if (type === 'all') {
+            setBufferList(pokemonList);
+        } else {
+            const list = await fetchPokemonsByType(type);
+            setBufferList(list);
+        }
+    }
+
     const filterPokemonListByName = (all: PokemonListItem[], query: string) => {
         return all.filter((p) => p.name.toLowerCase().startsWith(query.toLowerCase()));
     };
@@ -42,7 +53,7 @@ export default function Search() {
     return (
         <SafeAreaView>
             <SearchBar value={query} onChangeText={handleQueryChange} />
-            <TypeFilterTabs selectedType={selectedType} onSelect={setSelectedType} />
+            <TypeFilterTabs selectedType={selectedType} onSelect={handleTypeChange} />
             <PokemonList pokemonList={bufferList} />
         </SafeAreaView>
     );

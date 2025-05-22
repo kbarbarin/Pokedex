@@ -20,4 +20,3 @@ export interface PokedexContextType {
     setPokemonList: (p: PokemonListItem[]) => void;
     updatePokemonTypes: (name: string, types: string[]) => void;
   }
-  
