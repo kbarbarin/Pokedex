@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';  // <-- import useRouter
+import { useRouter } from 'expo-router';
 
 import { usePokedex } from '@/src/store/PokedexContext';
 import { enrichWithTypes } from '@/src/api/pokeapi';
 import { PokemonListItem } from '@/@type/pokemon';
 
 interface Props {
-    pokemon: PokemonListItem;
+  pokemon: PokemonListItem;
 }
 
-const Card = styled.TouchableOpacity`  /* TouchableOpacity pour clic */
+const Card = styled.TouchableOpacity`
   width: 48%;
   background-color: #fff;
   border-radius: 16px;
@@ -97,8 +97,9 @@ const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 const PokemonCard: React.FC<Props> = ({ pokemon }) => {
   const router = useRouter();
-  const { updatePokemonTypes } = usePokedex();
+  const { updatePokemonTypes, favoriteList, toggleFavorite } = usePokedex(); // <-- Add toggleFavorite
   const [localPokemon, setLocalPokemon] = useState(pokemon);
+  const isFavorite = favoriteList.some(p => p.name === pokemon.name); // <-- Check favorite
 
   useEffect(() => {
     if (!pokemon.types) {
@@ -110,14 +111,17 @@ const PokemonCard: React.FC<Props> = ({ pokemon }) => {
       });
     }
   }, [pokemon]);
-  
 
   return (
     <Card onPress={() => router.push(`/details/${localPokemon.name}`)}>
       <Header>
         <ID>#{localPokemon.id.toString().padStart(3, '0')}</ID>
-        <HeartButton>
-          <Ionicons name="heart-outline" size={18} color="#ccc" />
+        <HeartButton onPress={() => toggleFavorite(localPokemon)}>
+          <Ionicons
+            name={isFavorite ? 'heart' : 'heart-outline'}
+            size={18}
+            color={isFavorite ? '#ef4444' : '#ccc'}
+          />
         </HeartButton>
       </Header>
 

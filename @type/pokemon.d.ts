@@ -25,6 +25,8 @@ export interface PokedexContextType {
     setPokemon: (p: Pokemon | null) => void;
     pokemonList: PokemonListItem[];
     setPokemonList: (p: PokemonListItem[]) => void;
+    favoriteList: PokemonListItem[];
+    toggleFavorite: (p: PokemonListItem) => void;
     updatePokemonTypes: (name: string, types: string[]) => void;
     getPokemonTypes: (name: string) => string[] | undefined;
 }

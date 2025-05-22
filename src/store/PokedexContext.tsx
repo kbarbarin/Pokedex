@@ -20,6 +20,7 @@ export const usePokedex = () => useContext(PokedexContext);
 export const PokedexProvider = ({ children }: { children: ReactNode }) => {
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
   const [pokemonList, setPokemonList] = useState<PokemonListItem[]>([]);
+  const [favoriteList, setFavoriteList] = useState<PokemonListItem[]>([]);
 
   const updatePokemonTypes = (name: string, types: string[]) => {
     setPokemonList((prev) =>
@@ -28,6 +29,15 @@ export const PokedexProvider = ({ children }: { children: ReactNode }) => {
       )
     );
   };
+
+  const toggleFavorite = (pokemon: PokemonListItem) => {
+    setFavoriteList((prev) => {
+      const exists = prev.some(p => p.name === pokemon.name);
+      if (exists) return prev.filter(p => p.name !== pokemon.name);
+      return [...prev, pokemon];
+    });
+  };
+  
 
   const getPokemonTypes = (name: string): string[] | undefined => {
     const pokemon = pokemonList.find(p => p.name === name);
@@ -43,6 +53,8 @@ export const PokedexProvider = ({ children }: { children: ReactNode }) => {
         setPokemon,
         pokemonList,
         setPokemonList,
+        favoriteList,
+        toggleFavorite,
         updatePokemonTypes,
         getPokemonTypes
       }}

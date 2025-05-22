@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Text, Pressable, View } from 'react-native';
+import { ActivityIndicator, Text, Pressable } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import styled from 'styled-components/native';
 import { Ionicons } from '@expo/vector-icons';
@@ -11,10 +11,8 @@ import {
   fetchMovesDetails,
 } from '@/src/api/pokeapi';
 import { PokemonFull } from '@/@type/pokemon';
-import { usePokedex } from '@/src/store/PokedexContext';
 import { AboutSection, EvolutionSection, MovesSection, StatsSection } from '@/src/components/details';
 
-/* ------------------- STYLES ------------------- */
 const Container = styled.SafeAreaView`
   flex: 1;
   background-color: #f9f9f9;
@@ -95,89 +93,6 @@ const TabTxt = styled.Text<{ active?: boolean }>`
   font-weight: ${(p) => (p.active ? 'bold' : 'normal')};
 `;
 
-const StatsContainer = styled.View`
-  width: 100%;
-  padding: 16px;
-  margin-top: 12px;
-`;
-
-const StatRow = styled.View`
-  flex-direction: row;
-  align-items: center;
-  margin-bottom: 12px;
-`;
-
-const StatName = styled.Text`
-  width: 80px;
-  font-weight: bold;
-  color: #334155;
-`;
-
-const BarContainer = styled.View`
-  flex: 1;
-  height: 10px;
-  background-color: #e5e7eb;
-  border-radius: 6px;
-  overflow: hidden;
-  margin-horizontal: 8px;
-`;
-
-const BarFill = styled.View<{ value: number }>`
-  height: 100%;
-  width: ${(p) => `${Math.min(p.value, 100)}%`};
-  background-color: ${(p) => {
-    if (p.value < 40) return '#ef4444'; // rouge
-    if (p.value < 60) return '#f97316'; // orange
-    if (p.value < 80) return '#facc15'; // jaune
-    return '#22c55e'; // vert
-  }};
-  border-radius: 4px;
-`;
-
-const StatValue = styled.Text`
-  width: 32px;
-  text-align: right;
-  font-weight: bold;
-  color: #0f172a;
-`;
-
-
-const MovesContainer = styled.ScrollView`
-  margin-top: 20px;
-  width: 100%;
-  max-height: 300px;
-`;
-
-const MoveGroupTitle = styled.Text`
-  font-weight: 700;
-  font-size: 18px;
-  color: #1e40af;
-  margin-bottom: 12px;
-`;
-
-const MoveItem = styled.View`
-  background-color: #e0e7ff;
-  padding: 10px 15px;
-  margin-bottom: 8px;
-  border-radius: 12px;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const MoveName = styled.Text`
-  font-weight: 600;
-  color: #1e3a8a;
-  text-transform: capitalize;
-`;
-
-const MoveDetails = styled.Text`
-  font-size: 12px;
-  color: #475569;
-  font-style: italic;
-`;
-
-/* ------------------- UTILITAIRES ------------------- */
 const typeColors: Record<string, string> = {
   fire: '#F57D31',
   water: '#6493EB',
@@ -199,8 +114,6 @@ const typeColors: Record<string, string> = {
   steel: '#B7B9D0',
 };
 
-/* ------------------- TYPES ------------------- */
-
 type MoveDetailsType = {
   name: string;
   level_learned_at: number | null;
@@ -212,7 +125,6 @@ type MoveDetailsType = {
   description?: string;
 };
 
-/* ------------------- COMPOSANT PRINCIPAL ------------------- */
 export default function Details() {
   const router = useRouter();
   const { name } = useLocalSearchParams();
@@ -314,9 +226,6 @@ export default function Details() {
         <Text>Pokémon non trouvé.</Text>
       </Container>
     );
-
-  // Group moves by learn method (ex: level-up, machine, tutor, egg)
-  
 
   return (
     <Container>
