@@ -52,8 +52,7 @@ describe('PokedexContext', () => {
     const button = getByText('Add');
 
     button.props.onPress();
-    button.props.onPress(); // Try to add same Pokémon twice
-
+    button.props.onPress();
     expect(getByTestId('count').props.children).toBe(1);
   });
 });

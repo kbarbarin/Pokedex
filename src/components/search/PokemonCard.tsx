@@ -97,9 +97,9 @@ const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
 const PokemonCard: React.FC<Props> = ({ pokemon }) => {
   const router = useRouter();
-  const { updatePokemonTypes, favoriteList, toggleFavorite } = usePokedex(); // <-- Add toggleFavorite
+  const { updatePokemonTypes, favoriteList, toggleFavorite } = usePokedex();
   const [localPokemon, setLocalPokemon] = useState(pokemon);
-  const isFavorite = favoriteList.some(p => p.name === pokemon.name); // <-- Check favorite
+  const isFavorite = favoriteList.some(p => p.name === pokemon.name);
 
   useEffect(() => {
     if (!pokemon.types) {

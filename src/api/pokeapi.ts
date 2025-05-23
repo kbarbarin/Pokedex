@@ -71,7 +71,7 @@ export const fetchEvolutionChain = async (url: string) => {
 export const fetchMovesDetails = async (moveNames: string[]) => {
   try {
     const movesDetails = await Promise.all(
-      moveNames.slice(0, 20).map(async (moveName) => { // limite à 20 moves pour éviter trop de requêtes
+      moveNames.slice(0, 20).map(async (moveName) => {
         const res = await axios.get(`move/${moveName}`);
         const flavorEntry = res.data.flavor_text_entries.find(
           (entry: any) => entry.language.name === 'en'

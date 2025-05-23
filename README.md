@@ -1,50 +1,111 @@
-# Welcome to your Expo app 👋
+# 📱 Pokedex – React Native + TypeScript
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Une application mobile qui interroge l’API **PokéAPI** pour explorer les Pokémon, filtrer par type, consulter les fiches détaillées et gérer vos favoris.
 
-## Get started
+---
 
-1. Install dependencies
+## 🎯 Objectif
 
-   ```bash
-   npm install
-   ```
+Création d’une application mobile React Native pour afficher des informations sur les Pokémon via l'API ouverte [PokéAPI](https://pokeapi.co).
 
-2. Start the app
+Ce projet a été réalisé dans le cadre d’un test technique.
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## ⚙️ Installation & Lancement
 
 ```bash
-npm run reset-project
+# 1. Cloner le dépôt
+git clone git@github.com:kbarbarin/Pokedex.git
+cd Pokedex
+
+# 2. Installer les dépendances
+npm install
+# ou
+yarn install
+
+# 3. Lancer l'application
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## ⚠️ Important
 
-## Learn more
+Ne pas utiliser l’émulateur **iOS 18.4** (incompatibilité avec JavaScriptCore).  
+Préférez les versions **iOS ≤ 18.3, **Android (API 34+)**, ou un **appareil physique**.
 
-To learn more about developing your project with Expo, look at the following resources:
+---
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## ✨ Fonctionnalités
 
-## Join the community
+### 🔍 Recherche instantanée
+- Chaque frappe dans la barre de recherche filtre la liste de Pokémon en temps réel.
 
-Join our community of developers creating universal apps.
+### 🧩 Filtrage par type
+- Navigation par onglets : Tous, Feu, Eau, Plante, etc.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### 📃 Liste de Pokémon
+- Affichage en grille (2 colonnes)
+- Carte contenant :
+  - Sprite
+  - Nom
+  - ID
+  - Types
+  - Bouton "favori"
+
+### ❤️ Ajout aux favoris
+- Icône cœur cliquable (plein si déjà favori)
+- Affichage d’une liste dédiée aux favoris
+
+### 📄 Détails complets d’un Pokémon
+- **About** : taille, poids, description
+- **Stats** : barres de progression colorées
+- **Évolution** : affichage de la chaîne d'évolution
+- **Mouvements** : moves groupés par méthode (level-up, machine, etc.)
+
+### 🔄 Chargement intelligent des types
+- Optimisation pour éviter les appels API redondants
+
+### ⚠️ Gestion des erreurs
+- Feedback utilisateur clair
+- Logs dans la console pour le debug
+
+---
+
+## 🛠️ Choix Techniques
+
+| Besoin               | Choix Technique              | Justification                                                                 |
+|----------------------|------------------------------|-------------------------------------------------------------------------------|
+| Structure typée      | React Native + TypeScript    | Robustesse et maintenabilité du code                                          |
+| Gestion d’état       | `useContext` + `useReducer`  | Suffisant pour ce cas, Redux aurait été trop verbeux et complexe              |
+| Appels API           | `axios`                      | Simplicité d'utilisation et bonne gestion des erreurs                         |
+| UI / Styles          | `styled-components/native`   | Styles dynamiques, code lisible, composants réutilisables                     |
+| Navigation           | `expo-router`                | Simplicité grâce au file-based routing adapté à React Native                 |
+| Données externes     | PokéAPI                      | API gratuite, bien documentée, pas besoin de backend personnalisé             |
+| Favoris              | Contexte local               | Léger, pas besoin de persistance pour le test                                 |
+
+---
+
+## 📝 Consigne d'origine
+
+> **Test Technique : Création d'une application React Native avec l'API Pokémon**
+
+- ✅ React Native & TypeScript  
+- ✅ Affichage des Pokémon via PokéAPI  
+- ✅ Gestion d’état (Redux facultatif mais justifié)  
+- ✅ Écran liste + fiche détaillée  
+- ✅ Utilisation de styled-components  
+- ✅ Suivi des bonnes pratiques  
+- ✅ Bonus : infinite scroll
+
+---
+
+## 🤝 Contributions
+
+Les suggestions, issues et pull requests sont les bienvenues !
+
+---
+
+## 🧑‍💻 Auteur
+
+Développé par **[kbarbarin](https://github.com/kbarbarin)**  
+_"Attrapez-les tous !"_
