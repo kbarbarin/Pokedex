@@ -76,7 +76,7 @@ Préférez les versions **iOS ≤ 18.3, **Android (API 34+)**, ou un **appareil 
 | Besoin               | Choix Technique              | Justification                                                                 |
 |----------------------|------------------------------|-------------------------------------------------------------------------------|
 | Structure typée      | React Native + TypeScript    | Robustesse et maintenabilité du code                                          |
-| Gestion d’état       | `useContext` + `useReducer`  | Suffisant pour ce cas, Redux aurait été trop verbeux et complexe              |
+| Gestion d’état       | `useContext`  | Suffisant pour ce cas, Redux aurait été trop verbeux et complexe              |
 | Appels API           | `axios`                      | Simplicité d'utilisation et bonne gestion des erreurs                         |
 | UI / Styles          | `styled-components/native`   | Styles dynamiques, code lisible, composants réutilisables                     |
 | Navigation           | `expo-router`                | Simplicité grâce au file-based routing adapté à React Native                 |
